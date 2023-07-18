@@ -1,0 +1,37 @@
+.wrapper {
+    padding: 20px;
+
+    .profile {
+        margin-bottom: 30px;
+
+        .avatar {
+            margin-top: -70px;
+        }
+        .detailProfile {
+            color: #161823;
+            // line-height: 2;
+            display: inline-block;
+            margin-left: 28px;
+            align-items: center;
+
+            .userName {
+                font-size: 2.4rem;
+                margin-bottom: 10px;
+            }
+
+            .userEmail {
+                font-size: 1.6rem;
+                margin-bottom: 20px;
+            }
+        }
+    }
+}
+.action-btn {
+    position: relative;
+    display: flex;
+    font-size: 2.2rem;
+    color: #161823;
+    background-color: transparent;
+    padding: 4px 10px;
+    cursor: pointer;
+}
