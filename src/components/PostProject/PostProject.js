@@ -4,6 +4,7 @@ import { CreateProject, uploadFile } from './fetcher';
 import { UploadIcon } from '~/components/Icons';
 import classNames from 'classnames/bind';
 import styles from './PostProject.module.scss';
+import { useNavigate } from 'react-router-dom';
 
 const MyFormItemContext = React.createContext([]);
 function toArr(str) {
@@ -29,6 +30,7 @@ const MyFormItem = ({ name, ...props }) => {
 const PostProject = () => {
     const [file, setFile] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const navigate = useNavigate();
 
     const [api, contextHolder] = notification.useNotification();
     const openNotification = (placement) => {
@@ -63,6 +65,7 @@ const PostProject = () => {
                 if (payload.msg === 'Create new blog successfully') {
                     openNotification('Create new blog successfully');
                     setIsModalOpen(false);
+                    navigate('/');
                 } else {
                     openNotification('Create new blog failed');
                 }

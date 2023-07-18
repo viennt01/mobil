@@ -1,7 +1,7 @@
 export const API_PROJECTS = {
     LIST_PROJECTS_HOME: '/v1/blogs',
     GET_PROJECTS: '/v1/projects',
-    CREATE_PROJECTS: '/v1/projects',
+    CREATE_PROJECTS: '/v1/blogs',
 };
 
 export const API_MY_PROJECTS = {
