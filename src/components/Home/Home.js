@@ -2,8 +2,8 @@ import { Space, Spin, Form, Modal, Button, Input, notification } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { getListProject } from './fetcher';
 import Login from './login';
-import { CreateProject, uploadFile } from './fetcher';
-
+import { CreateProject, DeleteBlog } from './fetcher';
+import { Upload } from 'upload-js';
 import classNames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -91,6 +91,7 @@ const Home = () => {
     const [listDataProject, setListDataProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isLogin, setIsLogin] = useState(true);
+    const [isDefault, setIsDefault] = useState(false);
     const checkInformation = localStorage.getItem('student_id') ? false : true;
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [file, setFile] = useState(null);
@@ -108,8 +109,7 @@ const Home = () => {
     const fetchApi = () => {
         getListProject()
             .then((payload) => {
-                console.log(payload);
-                setListDataProject(payload.blogs);
+                setListDataProject(payload.blogs.filter((item) => item.status === 'Active'));
                 setLoading(false);
                 setIsLogin(false);
             })
@@ -144,17 +144,14 @@ const Home = () => {
         setIsModalOpen(false);
     };
 
-    const handleChange = (event) => {
-        const formData = new FormData();
-        console.log(event.target.files);
-        formData.append('file', event.target.files[0]);
-        uploadFile(formData)
-            .then((payload) => {
-                setFile(payload.url);
-            })
-            .catch((err) => {
-                console.log('error', err);
-            });
+    const handleChange = async (event) => {
+        setIsDefault(true);
+        const upload = Upload({ apiKey: 'public_kW15bY7Ft7ypJD9yUKHK2VVfvh7W' }); // Your real API key.
+
+        const [file] = event.target.files;
+        const { fileUrl } = await upload.uploadFile(file);
+        setFile(fileUrl);
+        setIsDefault(false);
     };
 
     const onFinish = (value) => {
@@ -205,6 +202,18 @@ const Home = () => {
             separate: true,
         },
     ];
+
+    const handleDeleteBlog = (id) => {
+        console.log(id);
+        DeleteBlog(id)
+            .then((payload) => {
+                console.log(payload);
+                fetchApi();
+            })
+            .catch((err) => {
+                console.log('error', err);
+            });
+    };
     return (
         <>
             {contextHolder}
@@ -316,20 +325,67 @@ const Home = () => {
                             <div className="w3-container" style={{ paddingBottom: '24px' }}>
                                 <p style={{ paddingBottom: '24px' }}>{item.content}</p>
                                 <div className="w3-row">
-                                    <div className="w3-col m8 s12">
+                                    <div className="w3-col m11 s12">
                                         <p>
                                             <button className="w3-button w3-padding-large w3-white w3-border">
                                                 <b>READ MORE »</b>
                                             </button>
                                         </p>
                                     </div>
-                                    <div className="w3-col m4 w3-hide-small">
-                                        <p>
-                                            <span className="w3-padding-large w3-right">
-                                                <b>Comments &nbsp;</b> <span className="w3-badge">2</span>
-                                            </span>
-                                        </p>
-                                    </div>
+
+                                    {localStorage.getItem('student_id') === item.blog_user.user_id ? (
+                                        <button
+                                            onClick={() => handleDeleteBlog(item.blog_id)}
+                                            style={{
+                                                position: 'relative',
+                                                width: '50px',
+                                                height: '50px',
+                                                borderRadius: '25px',
+                                                border: '2px solid rgb(231, 50, 50)',
+                                                backgroundColor: '#fff',
+                                                cursor: 'pointer',
+                                                boxShadow: '0 0 10px #333',
+                                                overflow: 'hidden',
+                                                transition: '.3s',
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.backgroundColor = 'rgb(231, 50, 50)';
+                                                e.target.style.borderColor = '#fff';
+                                                e.target.querySelector('svg').style.color = '#fff';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.backgroundColor = '#fff';
+                                                e.target.style.borderColor = 'rgb(231, 50, 50)';
+                                                e.target.querySelector('svg').style.color = 'rgb(231, 50, 50)';
+                                            }}
+                                        >
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="25"
+                                                height="25"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                                stroke-width="2"
+                                                style={{
+                                                    color: 'rgb(231, 50, 50)',
+                                                    position: 'absolute',
+                                                    top: '50%',
+                                                    left: '50%',
+                                                    transform: 'translate(-50%, -50%)',
+                                                    transition: '.3s',
+                                                }}
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                />
+                                            </svg>
+                                        </button>
+                                    ) : (
+                                        <></>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -365,7 +421,7 @@ const Home = () => {
                         {file ? <Image width={200} src={file} style={{ marginTop: 30 }} /> : null}
                     </MyFormItem>
 
-                    <Button type="primary" htmlType="submit">
+                    <Button type="primary" htmlType="submit" loading={isDefault}>
                         Submit
                     </Button>
                 </Form>

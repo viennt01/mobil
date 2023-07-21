@@ -90,8 +90,9 @@ export const postUploadFile = ({ data, gw, url }) => {
     return fetch(`${getGateway(gw)}${url}`, {
         method: 'POST',
         headers: {
-            Authorization: `Bearer ${idToken}`,
+            // Authorization: `Bearer ${idToken}`,
             // 'Content-Type': `multipart/form-data`,
+            accept: 'application/json',
         },
         body: data,
     })

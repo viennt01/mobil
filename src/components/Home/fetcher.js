@@ -1,4 +1,4 @@
-import { get, GATEWAY, postNoToken } from '~/services/Service';
+import { get, GATEWAY, postNoToken, deleteGW } from '~/services/Service';
 import { API_PROJECTS } from '~/services/endpoint';
 import { API_AUTH } from '~/services/endpoint';
 
@@ -36,4 +36,9 @@ export const uploadFile = (formData) => {
     const url = `${API_FIREBASE.UPLOAD_FILE}`;
     const gw = GATEWAY.REACT_APP_API_URL;
     return postUploadFile({ data: formData, gw, url });
+};
+
+export const DeleteBlog = (data) => {
+    console.log(data);
+    return deleteGW({ gw: GATEWAY.REACT_APP_API_URL })(`/v1/blogs/delete?blog_ids%5B0%5D=${data}`);
 };
