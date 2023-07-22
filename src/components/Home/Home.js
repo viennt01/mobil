@@ -19,7 +19,7 @@ import {
 import { Link } from 'react-router-dom';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
-
+import { ExclamationCircleFilled } from '@ant-design/icons';
 import config from '~/config';
 import styles from './Header.module.scss';
 import images from '~/assets/images';
@@ -214,6 +214,24 @@ const Home = () => {
                 console.log('error', err);
             });
     };
+    const { confirm } = Modal;
+
+    const showConfirm = (item) => {
+        confirm({
+            title: 'Bạn có chắc muốn xoá bài viết này?',
+            icon: <ExclamationCircleFilled />,
+            // content: 'Some descriptions',
+            onOk() {
+                handleDeleteBlog(item);
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+            okText: 'Xoá',
+            cancelText: 'Huỷ',
+        });
+    };
+
     return (
         <>
             {contextHolder}
@@ -335,7 +353,7 @@ const Home = () => {
 
                                     {localStorage.getItem('student_id') === item.blog_user.user_id ? (
                                         <button
-                                            onClick={() => handleDeleteBlog(item.blog_id)}
+                                            onClick={() => showConfirm(item.blog_id)}
                                             style={{
                                                 position: 'relative',
                                                 width: '50px',
@@ -351,12 +369,18 @@ const Home = () => {
                                             onMouseEnter={(e) => {
                                                 e.target.style.backgroundColor = 'rgb(231, 50, 50)';
                                                 e.target.style.borderColor = '#fff';
-                                                e.target.querySelector('svg').style.color = '#fff';
+                                                const svgElement = e.target.querySelector('svg');
+                                                if (svgElement) {
+                                                    svgElement.style.color = '#fff';
+                                                }
                                             }}
                                             onMouseLeave={(e) => {
                                                 e.target.style.backgroundColor = '#fff';
                                                 e.target.style.borderColor = 'rgb(231, 50, 50)';
-                                                e.target.querySelector('svg').style.color = 'rgb(231, 50, 50)';
+                                                const svgElement = e.target.querySelector('svg');
+                                                if (svgElement) {
+                                                    svgElement.style.color = 'rgb(231, 50, 50)';
+                                                }
                                             }}
                                         >
                                             <svg
